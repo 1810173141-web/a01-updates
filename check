@@ -1,7 +1,7 @@
 {
   "code": 1,
   "version": "1.2.42",
-  "md5": "a908bf2e52066f77fada23c534f45c85",
-  "download_url": "https://1810173141-web.github.io/a01-updates/update.apk?md5=a908bf2e52066f77fada23c534f45c85",
-  "message": "同签名公网更新通道测试版本。"
+  "md5": "98ad3306ce436a7e8c9c2c07cb04d757",
+  "download_url": "https://1810173141-web.github.io/a01-updates/update.apk?md5=98ad3306ce436a7e8c9c2c07cb04d757",
+  "message": "同签名公网更新通道：修复系统 CA 信任，保留本地 2099 测试期限。"
 }
