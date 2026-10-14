@@ -1,0 +1,44 @@
+name: Deploy A01 static update channel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout public release fragments
+        uses: actions/checkout@v4
+      - name: Reassemble and verify the public APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          destination="public/"
+          mkdir -p "$destination"
+          cat update.apk.0* > "$destination/update.apk"
+          printf '%s  %s\n' '8fbe20793fef6c1a23c3d8d05acd1529bc15b0fc63a6881e81afb64acfd57834' "$destination/update.apk" | sha256sum --check --strict -
+          cp check index.html "$destination/"
+          cp .nojekyll public/.nojekyll
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload only verified public files
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+      - name: Deploy static channel
+        id: deployment
+        uses: actions/deploy-pages@v4
