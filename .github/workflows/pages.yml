@@ -1,4 +1,4 @@
-name: Deploy A01 static update channel
+name: Deploy A01 dual update channels
 
 on:
   push:
@@ -21,17 +21,19 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout public release fragments
+      - name: Checkout root and stable release fragments
         uses: actions/checkout@v4
-      - name: Reassemble and verify the public APK
+      - name: Reassemble and verify both public APK channels
         shell: bash
         run: |
           set -euo pipefail
-          destination="public/"
-          mkdir -p "$destination"
-          cat update.apk.0* > "$destination/update.apk"
-          printf '%s  %s\n' '8fbe20793fef6c1a23c3d8d05acd1529bc15b0fc63a6881e81afb64acfd57834' "$destination/update.apk" | sha256sum --check --strict -
-          cp check index.html "$destination/"
+          mkdir -p public public/stable
+          cat update.apk.0* > public/update.apk
+          printf '%s  %s\n' '8fbe20793fef6c1a23c3d8d05acd1529bc15b0fc63a6881e81afb64acfd57834' public/update.apk | sha256sum --check --strict -
+          cp check index.html public/
+          cat stable/update.apk.0* > public/stable/update.apk
+          printf '%s  %s\n' '1e50f3c0be0a804e57482cd4775eebc4214b6fa0b134725613ae2f251ce8a90a' public/stable/update.apk | sha256sum --check --strict -
+          cp stable/check stable/index.html public/stable/
           cp .nojekyll public/.nojekyll
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -39,6 +41,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
-      - name: Deploy static channel
+      - name: Deploy dual static channels
         id: deployment
         uses: actions/deploy-pages@v4
