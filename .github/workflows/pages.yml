@@ -21,20 +21,29 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout root and stable release fragments
+      - name: Checkout current stable release fragments
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout fixed last successful root publication
+        uses: actions/checkout@v4
+        with:
+          repository: 1810173141-web/a01-updates
+          ref: 891d4e312ee96b337db6160f5643ec346d8293e3
+          path: legacy_root
+          persist-credentials: false
       - name: Reassemble and verify both public APK channels
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p public public/stable
-          cat update.apk.0* > public/update.apk
+          cat legacy_root/update.apk.0* > public/update.apk
           printf '%s  %s\n' '8fbe20793fef6c1a23c3d8d05acd1529bc15b0fc63a6881e81afb64acfd57834' public/update.apk | sha256sum --check --strict -
-          cp check index.html public/
+          cp legacy_root/check legacy_root/index.html public/
           cat stable/update.apk.0* > public/stable/update.apk
           printf '%s  %s\n' '1e50f3c0be0a804e57482cd4775eebc4214b6fa0b134725613ae2f251ce8a90a' public/stable/update.apk | sha256sum --check --strict -
           cp stable/check stable/index.html public/stable/
-          cp .nojekyll public/.nojekyll
+          cp legacy_root/.nojekyll public/.nojekyll
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Upload only verified public files
