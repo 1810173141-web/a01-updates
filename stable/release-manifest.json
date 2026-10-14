@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "package": "com.local.scriptrunner",
+  "version_name": "1.5.0",
+  "version_code": 1005000,
+  "minimum_client_version_code": 1004000,
+  "expiry_ms": 4102415999000,
+  "apk": {
+    "name": "update.apk",
+    "bytes": 43981897,
+    "sha256": "4a7832e574bf1d5f4af9841a6abcf3c3c0b0b5359d5f11df745d0167ccf6ce88",
+    "md5": "9d8e7e1242fc2ba45ee0a1e9baeed202",
+    "certificate_sha256": "25280080e854bc7fbbcae86b89b3d7cc0d66d9c1925454f4d97fd4e0eadf8369"
+  },
+  "parts": [
+    {
+      "name": "update.apk.001",
+      "bytes": 8388608,
+      "sha256": "a4c055c1f7cfdbc19ad4d6b8ce14ea0d1c53976bbf09b085f7915f0382ce41d1"
+    },
+    {
+      "name": "update.apk.002",
+      "bytes": 8388608,
+      "sha256": "73bbafb73a78dbd61449e2d8e3c4289dba43a515ca6db7f8035fb1232c83f47b"
+    },
+    {
+      "name": "update.apk.003",
+      "bytes": 8388608,
+      "sha256": "ab28cfca76b1d5c233ce5d1b5c37be907043546f10540e18974d3703a4399775"
+    },
+    {
+      "name": "update.apk.004",
+      "bytes": 8388608,
+      "sha256": "e4b95ad5b69b4983ebefef5b3e196b15ae40899129a1a5085d3d51a36880ee12"
+    },
+    {
+      "name": "update.apk.005",
+      "bytes": 8388608,
+      "sha256": "cfa8bb828ea1a58bfc819e44612ba2e214ff0aa4440de8e4446cfcef6d4401ab"
+    },
+    {
+      "name": "update.apk.006",
+      "bytes": 2038857,
+      "sha256": "b1f92ee7c576b70b5a1a64e24301b3a5329d74fb1849f594e8af91cd455b703f"
+    }
+  ],
+  "check_sha256": "42010866d34011d1a6e4629500917335350aa81fc13ea7c94aa9ad309d84fa4a"
+}
