@@ -1,4 +1,4 @@
-name: Deploy A01 dual update channels
+name: Deploy A01 with verified 2099 stable releases
 
 on:
   push:
@@ -21,18 +21,31 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout current stable release fragments
+      - name: Checkout release and verification code
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Checkout fixed last successful root publication
+      - name: Checkout fixed legacy publication
         uses: actions/checkout@v4
         with:
           repository: 1810173141-web/a01-updates
           ref: 891d4e312ee96b337db6160f5643ec346d8293e3
           path: legacy_root
           persist-credentials: false
-      - name: Reassemble and verify both public APK channels
+      - name: Set up Java for final APK inspection
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Download pinned verification tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .verification-tools
+          curl --fail --location --retry 2 --output .verification-tools/apktool.jar https://github.com/iBotPeaches/Apktool/releases/download/v2.11.1/apktool_2.11.1.jar
+          curl --fail --location --retry 2 --output .verification-tools/signer.jar https://github.com/patrickfav/uber-apk-signer/releases/download/v1.3.0/uber-apk-signer-1.3.0.jar
+          printf '%s  %s\n' '56d59c524fc764263ba8d345754d8daf55b1887818b15cd3b594f555d249e2db' .verification-tools/apktool.jar 'e1299fd6fcf4da527dd53735b56127e8ea922a321128123b9c32d619bba1d835' .verification-tools/signer.jar | sha256sum --check --strict -
+      - name: Reassemble and verify 2099 stable release
         shell: bash
         run: |
           set -euo pipefail
@@ -41,7 +54,7 @@ jobs:
           printf '%s  %s\n' '8fbe20793fef6c1a23c3d8d05acd1529bc15b0fc63a6881e81afb64acfd57834' public/update.apk | sha256sum --check --strict -
           cp legacy_root/check legacy_root/index.html public/
           cat stable/update.apk.0* > public/stable/update.apk
-          printf '%s  %s\n' '1e50f3c0be0a804e57482cd4775eebc4214b6fa0b134725613ae2f251ce8a90a' public/stable/update.apk | sha256sum --check --strict -
+          python3 tools/verify_release.py --release-dir stable --apk public/stable/update.apk --java java --apktool-jar .verification-tools/apktool.jar --signer-jar .verification-tools/signer.jar
           cp stable/check stable/index.html public/stable/
           cp legacy_root/.nojekyll public/.nojekyll
       - name: Configure GitHub Pages
@@ -50,6 +63,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
-      - name: Deploy dual static channels
+      - name: Deploy verified update channels
         id: deployment
         uses: actions/deploy-pages@v4
